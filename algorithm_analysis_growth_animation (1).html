@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithm Analysis & Growth of Functions</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#ffffff; --ink:#162033; --muted:#657084;
+  --accent:#244a7c; --accent2:#4d6fa3; --line:#d9e0ea; --good:#eaf4ee;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:22px 18px;text-align:center}
+header h1{margin:0;color:var(--accent);font-size:clamp(24px,4vw,38px)}
+header p{margin:8px 0 0;color:var(--muted)}
+.wrap{max-width:1150px;margin:24px auto;padding:0 16px}
+.intro{background:#fff8df;border:1px solid #eadb9b;padding:14px 16px;border-radius:12px;margin-bottom:18px;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 5px 18px rgba(20,35,60,.06)}
+h2{font-size:20px;margin:0 0 8px;color:var(--accent)}
+.small{font-size:14px;color:var(--muted);line-height:1.45}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:15px 0}
+button{border:0;border-radius:9px;padding:10px 14px;background:var(--accent);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#e9eef6;color:var(--accent)}
+select,input[type=range]{padding:8px}
+.stage{min-height:280px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe;overflow:hidden}
+.axis{position:relative;height:235px;border-left:2px solid #758195;border-bottom:2px solid #758195;margin:10px 10px 30px 42px}
+.curve{position:absolute;left:0;bottom:0;width:100%;height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin-top:8px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px}
+.stepbox{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:24px}
+.node{padding:13px 15px;border:2px solid var(--accent2);border-radius:10px;background:white;font-weight:700;opacity:.25;transform:scale(.94);transition:.35s}
+.node.active{opacity:1;transform:scale(1);background:#edf3fb}
+.arrow{font-size:22px;color:var(--muted)}
+.result{margin-top:18px;padding:13px;border-radius:10px;background:var(--good);font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left}
+th{color:var(--accent)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Algorithm Analysis & Growth of Functions</h1>
+  <p>DAA Interactive Animation • Shresth Bhardwaj • SAP ID 590021937 • Batch B18</p>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <b>Idea:</b> Algorithm analysis studies how time or space grows as input size <i>n</i> increases.
+    This animation compares common growth functions and demonstrates how operation counting leads to an asymptotic complexity.
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Panel 1 — Growth of Functions</h2>
+      <div class="small">Move the input-size slider and watch how common complexity classes grow relative to each other.</div>
+      <div class="controls">
+        <label>n: <b id="nValue">10</b></label>
+        <input id="nSlider" type="range" min="2" max="50" value="10">
+        <button class="secondary" onclick="resetGrowth()">Reset</button>
+      </div>
+      <div class="stage">
+        <svg id="chart" viewBox="0 0 600 260" width="100%" height="260" aria-label="Growth functions chart"></svg>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#2f6fed"></i>O(1)</span>
+        <span><i class="dot" style="background:#16a085"></i>O(log n)</span>
+        <span><i class="dot" style="background:#8e44ad"></i>O(n)</span>
+        <span><i class="dot" style="background:#e67e22"></i>O(n log n)</span>
+        <span><i class="dot" style="background:#c0392b"></i>O(n²)</span>
+      </div>
+      <div class="result" id="growthResult"></div>
+    </section>
+
+    <section class="card">
+      <h2>Panel 2 — Analyze an Algorithm</h2>
+      <div class="small">Step through a simple nested-loop analysis. Each highlighted box is one stage in converting code into a growth function.</div>
+      <div class="controls">
+        <button onclick="nextStep()">Next Step</button>
+        <button class="secondary" onclick="resetSteps()">Reset</button>
+      </div>
+      <pre style="background:#172033;color:#f5f7fb;padding:14px;border-radius:10px;overflow:auto"><code>for (i = 0; i &lt; n; i++)
+    for (j = 0; j &lt; n; j++)
+        x++;</code></pre>
+      <div class="stepbox">
+        <div class="node" id="s0">Input size n</div><span class="arrow">→</span>
+        <div class="node" id="s1">Outer loop: n</div><span class="arrow">→</span>
+        <div class="node" id="s2">Inner loop: n</div><span class="arrow">→</span>
+        <div class="node" id="s3">n × n operations</div><span class="arrow">→</span>
+        <div class="node" id="s4">Θ(n²)</div>
+      </div>
+      <div class="result" id="stepResult">Press “Next Step” to begin.</div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:18px">
+    <h2>Complexity Reference</h2>
+    <table>
+      <thead><tr><th>Growth</th><th>Name</th><th>Typical Example</th><th>Scalability</th></tr></thead>
+      <tbody>
+        <tr><td>O(1)</td><td>Constant</td><td>Array access by index</td><td>Excellent</td></tr>
+        <tr><td>O(log n)</td><td>Logarithmic</td><td>Binary search</td><td>Excellent</td></tr>
+        <tr><td>O(n)</td><td>Linear</td><td>Linear search</td><td>Good</td></tr>
+        <tr><td>O(n log n)</td><td>Linearithmic</td><td>Merge sort</td><td>Good</td></tr>
+        <tr><td>O(n²)</td><td>Quadratic</td><td>Two full nested loops</td><td>Poor for large n</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<footer>Design and Analysis of Algorithms — Interactive demonstration for academic submission</footer>
+
+<script>
+const svg = document.getElementById("chart");
+const slider = document.getElementById("nSlider");
+const nValue = document.getElementById("nValue");
+const result = document.getElementById("growthResult");
+const NS="http://www.w3.org/2000/svg";
+
+const funcs = [
+  {name:"O(1)", color:"#2f6fed", f:n=>1},
+  {name:"O(log n)", color:"#16a085", f:n=>Math.log2(n)},
+  {name:"O(n)", color:"#8e44ad", f:n=>n},
+  {name:"O(n log n)", color:"#e67e22", f:n=>n*Math.log2(n)},
+  {name:"O(n²)", color:"#c0392b", f:n=>n*n}
+];
+
+function el(tag, attrs={}){
+  const e=document.createElementNS(NS,tag);
+  Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));
+  return e;
+}
+
+function draw(){
+  const maxN=+slider.value;
+  nValue.textContent=maxN;
+  svg.innerHTML="";
+  const W=600,H=260,L=48,R=18,T=15,B=35;
+  const pw=W-L-R, ph=H-T-B;
+  const ymax=maxN*maxN;
+
+  svg.appendChild(el("line",{x1:L,y1:T,x2:L,y2:H-B,stroke:"#758195","stroke-width":2}));
+  svg.appendChild(el("line",{x1:L,y1:H-B,x2:W-R,y2:H-B,stroke:"#758195","stroke-width":2}));
+
+  for(let k=0;k<=4;k++){
+    const y=T+ph*k/4;
+    svg.appendChild(el("line",{x1:L,y1:y,x2:W-R,y2:y,stroke:"#e4e8ef","stroke-width":1}));
+  }
+
+  funcs.forEach(fn=>{
+    let d="";
+    for(let n=1;n<=maxN;n++){
+      const x=L+(n-1)/(maxN-1)*pw;
+      const raw=fn.f(n);
+      const y=T+ph-(raw/ymax)*ph;
+      d+=(n===1?"M":"L")+x.toFixed(2)+" "+y.toFixed(2)+" ";
+    }
+    svg.appendChild(el("path",{d,fill:"none",stroke:fn.color,"stroke-width":3,"stroke-linecap":"round"}));
+  });
+
+  const tx=el("text",{x:W/2,y:H-6,"text-anchor":"middle",fill:"#657084","font-size":13});
+  tx.textContent="Input size (n)"; svg.appendChild(tx);
+  const ty=el("text",{x:14,y:H/2,transform:`rotate(-90 14 ${H/2})`,"text-anchor":"middle",fill:"#657084","font-size":13});
+  ty.textContent="Relative operations"; svg.appendChild(ty);
+
+  result.innerHTML=`At <b>n = ${maxN}</b>: log₂n ≈ ${Math.log2(maxN).toFixed(2)}, n = ${maxN}, n log₂n ≈ ${(maxN*Math.log2(maxN)).toFixed(1)}, and n² = ${maxN*maxN}. The gap widens rapidly as n grows.`;
+}
+slider.addEventListener("input",draw);
+function resetGrowth(){slider.value=10;draw();}
+
+let step=-1;
+const messages=[
+  "Step 1: Let n represent the input size.",
+  "Step 2: The outer loop executes n times.",
+  "Step 3: For every outer iteration, the inner loop also executes n times.",
+  "Step 4: Total basic operations = n × n = n².",
+  "Result: The dominant growth term is n², so the algorithm is Θ(n²)."
+];
+function nextStep(){
+  if(step<4) step++;
+  document.querySelectorAll(".node").forEach((x,i)=>x.classList.toggle("active",i<=step));
+  document.getElementById("stepResult").textContent=messages[step];
+}
+function resetSteps(){
+  step=-1;
+  document.querySelectorAll(".node").forEach(x=>x.classList.remove("active"));
+  document.getElementById("stepResult").textContent='Press “Next Step” to begin.';
+}
+draw();
+</script>
+</body>
+</html>
